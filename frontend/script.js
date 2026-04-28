@@ -1,4 +1,4 @@
-const API_URL = 'http://127.0.0.1:8000/api/gerar-senha';
+const API_URL = (typeof CONFIG !== 'undefined') ? CONFIG.API_URL : 'http://127.0.0.1:8000/api/gerar-senha';
 
 const lengthSlider  = document.getElementById('lengthSlider');
 const lengthValue   = document.getElementById('lengthValue');
