@@ -290,6 +290,31 @@ Para **parar o servidor**, pressione `Ctrl + C` no terminal.
 
 ---
 
+### Estrutura do frontend
+
+| Arquivo | Responsabilidade |
+|---------|-----------------|
+| `frontend/index.html` | Estrutura da página: exibição da senha, indicador de força, slider de tamanho, checkboxes e botões |
+| `frontend/style.css` | Estilo visual: card centralizado, barra de força com cores por nível, feedback do botão copiar |
+| `frontend/script.js` | Lógica: validação de critérios, chamada à API via `fetch`, exibição do resultado e cópia para clipboard |
+
+### Como abrir o frontend
+
+> O backend deve estar em execução antes de abrir o frontend.  
+> Consulte a seção **Como executar o backend** acima.
+
+#### Opção A — Abrir diretamente no navegador
+
+Navegue até a pasta `frontend/` pelo explorador de arquivos e dê dois cliques em `index.html`.  
+O navegador abrirá a aplicação localmente.
+
+#### Opção B — VS Code Live Server (recomendado)
+
+Se estiver usando o VS Code, instale a extensão **Live Server** (Ritwick Dey), clique com o botão direito em `index.html` e selecione **"Open with Live Server"**.  
+A aplicação abrirá em `http://127.0.0.1:5500` e recarregará automaticamente a cada alteração nos arquivos.
+
+---
+
 ## Fase 4 — Testes e Validação
 
 > _A ser documentado._
