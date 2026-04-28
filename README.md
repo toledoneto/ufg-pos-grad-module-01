@@ -138,7 +138,128 @@ Response `422`:
 
 ## Fase 3 — Codificação
 
-> _A ser documentado._
+### Estrutura do backend
+
+| Arquivo | Responsabilidade |
+|---------|-----------------|
+| `backend/main.py` | Inicializa o FastAPI, configura CORS e declara a rota `POST /api/gerar-senha` |
+| `backend/generator.py` | Geração da senha com `secrets` (CSPRNG) e cálculo da força |
+| `backend/models.py` | Modelos Pydantic de entrada (`SenhaRequest`) e saída (`SenhaResponse`) com validação |
+| `backend/requirements.txt` | Dependências para instalação com **pip** |
+| `backend/pyproject.toml` | Dependências para instalação com **uv** |
+
+### Como executar o backend
+
+> As instruções abaixo são para o terminal. No Windows, use o **Prompt de Comando** ou o **PowerShell**.  
+> No macOS/Linux, use o **Terminal**.
+
+#### Pré-requisito: Python 3.12 ou superior
+
+Verifique se o Python está instalado abrindo o terminal e digitando:
+
+```
+python --version
+```
+
+Se o resultado for `Python 3.12.x` ou superior, está pronto. Caso contrário, baixe em [python.org](https://www.python.org/downloads/).
+
+---
+
+#### Opção A — Instalação com pip (padrão do Python)
+
+**Passo 1 — Acesse a pasta do backend**
+
+```
+cd backend
+```
+
+**Passo 2 — Crie um ambiente virtual**
+
+O ambiente virtual isola as dependências do projeto sem afetar o Python instalado no sistema.
+
+```
+python -m venv .venv
+```
+
+**Passo 3 — Ative o ambiente virtual**
+
+No **Windows** (Prompt de Comando):
+```
+.venv\Scripts\activate
+```
+
+No **Windows** (PowerShell):
+```
+.venv\Scripts\Activate.ps1
+```
+
+No **macOS / Linux**:
+```
+source .venv/bin/activate
+```
+
+> Quando ativo, o terminal mostrará `(.venv)` no início da linha.
+
+**Passo 4 — Instale as dependências**
+
+```
+pip install -r requirements.txt
+```
+
+**Passo 5 — Inicie o servidor**
+
+```
+uvicorn main:app --reload
+```
+
+---
+
+#### Opção B — Instalação com uv (mais rápido)
+
+O `uv` é uma ferramenta moderna que cria o ambiente virtual e instala dependências em um único comando.
+
+**Passo 1 — Instale o uv** (caso ainda não tenha)
+
+```
+pip install uv
+```
+
+**Passo 2 — Acesse a pasta do backend**
+
+```
+cd backend
+```
+
+**Passo 3 — Instale as dependências**
+
+O `uv` cria o ambiente virtual automaticamente:
+
+```
+uv sync
+```
+
+**Passo 4 — Inicie o servidor**
+
+```
+uv run uvicorn main:app --reload
+```
+
+---
+
+#### Verificando se o servidor está funcionando
+
+Após iniciar, o terminal exibirá uma mensagem como:
+
+```
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+```
+
+Abra o navegador e acesse:
+
+- **Documentação interativa da API:** http://127.0.0.1:8000/docs  
+  Permite testar os endpoints diretamente pelo navegador, sem precisar de nenhuma ferramenta adicional.
+
+Para **parar o servidor**, pressione `Ctrl + C` no terminal.
 
 ---
 
