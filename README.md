@@ -220,9 +220,17 @@ O `uv` é uma ferramenta moderna que cria o ambiente virtual e instala dependên
 
 **Passo 1 — Instale o uv** (caso ainda não tenha)
 
+No **Windows** (PowerShell):
 ```
-pip install uv
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
+
+No **macOS / Linux**:
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+> Feche e reabra o terminal após a instalação para que o comando `uv` seja reconhecido.
 
 **Passo 2 — Acesse a pasta do backend**
 
