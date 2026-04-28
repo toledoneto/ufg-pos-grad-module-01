@@ -457,6 +457,58 @@ tests/test_models.py::test_valores_padrao PASSED
 
 ---
 
+### Auditoria de segurança
+
+#### O que está correto
+
+| Item | Detalhe |
+|------|---------|
+| Geração criptograficamente segura | `secrets.choice()` e `secrets.SystemRandom()` usam CSPRNG do SO, não `random` |
+| Nenhuma senha armazenada | Backend stateless: a senha existe apenas na resposta HTTP e é descartada |
+| Validação de entrada | Pydantic rejeita `tamanho` fora de 8–128 e requisições sem nenhum tipo ativo (HTTP 422) |
+| Senha exibida com segurança | `textContent` (não `innerHTML`) no frontend, sem risco de XSS |
+| Porta do frontend configurável | `server.js` já usa `process.env.PORT \|\| 3000` |
+
+#### Problemas identificados e correções aplicadas
+
+**1 — CORS com `"*"` (permissivo demais)**
+
+Em produção, aceitar requisições de qualquer origem permite que qualquer site na internet chame a API.
+
+*Correção aplicada:* `main.py` agora lê `ALLOWED_ORIGINS` do ambiente. Em desenvolvimento permanece `*`; em produção basta definir a variável:
+
+```
+ALLOWED_ORIGINS=https://meusite.com
+```
+
+**2 — URL do backend hardcoded no frontend**
+
+`script.js` tinha `http://127.0.0.1:8000/api/gerar-senha` fixo no código — impossível de alterar sem editar o fonte.
+
+*Correção aplicada:* criado `frontend/config.js` com a URL em um objeto `CONFIG`. Basta editar esse arquivo ao mudar o endereço do backend.
+
+#### Variáveis de ambiente disponíveis
+
+| Variável | Onde | Padrão | Descrição |
+|----------|------|--------|-----------|
+| `ALLOWED_ORIGINS` | `backend/.env` | `*` | Origens CORS permitidas, separadas por vírgula |
+| `PORT` | `backend/.env` ou flag `--port` do uvicorn | `8000` | Porta do servidor backend |
+| `PORT` | `frontend/.env` ou `process.env.PORT` | `3000` | Porta do servidor frontend |
+
+O arquivo [`backend/.env.example`](backend/.env.example) documenta todas as variáveis com exemplos.  
+**Nunca commite o arquivo `.env`** — ele está protegido pelo `.gitignore`.
+
+#### Itens de segurança para produção (Próximos Passos)
+
+| Item | Risco | Recomendação |
+|------|-------|--------------|
+| Sem HTTPS | Dados trafegam em texto claro | Usar HTTPS com certificado TLS (ex.: Let's Encrypt) |
+| Sem rate limiting | API pode ser abusada por requisições em massa | Adicionar `slowapi` ou similar ao FastAPI |
+| Swagger UI exposto | `/docs` visível publicamente | Desabilitar em produção: `docs_url=None` no `FastAPI()` |
+| `server.js` serve seus próprios arquivos | `package.json` e `server.js` acessíveis pelo navegador | Mover os estáticos para subpasta `public/` e servir apenas ela |
+
+---
+
 ## Fase 5 — Manutenção
 
 > _A ser documentado._
