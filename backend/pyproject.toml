@@ -1,0 +1,9 @@
+[project]
+name = "gerador-senhas"
+version = "0.1.0"
+description = "Backend do Gerador de Senhas Seguras"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+]
