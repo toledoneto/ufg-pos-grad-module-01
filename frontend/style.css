@@ -1,0 +1,250 @@
+:root {
+  --bg-from: #1a202c;
+  --bg-to:   #2d3748;
+  --card:    #ffffff;
+  --text:    #2d3748;
+  --muted:   #718096;
+  --border:  #e2e8f0;
+  --surface: #f7fafc;
+
+  --primary:       #4299e1;
+  --primary-hover: #3182ce;
+
+  --strength-fraca:       #e53e3e;
+  --strength-media:       #dd6b20;
+  --strength-forte:       #d69e2e;
+  --strength-muito-forte: #38a169;
+
+  --radius: 12px;
+  --transition: 0.2s ease;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-from), var(--bg-to));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 24px;
+  color: var(--text);
+}
+
+/* ── Card ── */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+}
+
+h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* ── Password display ── */
+.password-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  min-height: 58px;
+  margin-bottom: 12px;
+}
+
+#passwordText {
+  flex: 1;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+#passwordText.placeholder {
+  font-family: inherit;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.copy-btn {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: var(--muted);
+  transition: border-color var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+
+.copy-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.copy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Strength bar ── */
+.strength-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  min-height: 20px;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.strength-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  transition: width 0.4s ease, background-color 0.4s ease;
+}
+
+.strength-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  width: 84px;
+  text-align: right;
+  letter-spacing: 0.02em;
+  transition: color 0.4s ease;
+}
+
+/* ── Divider ── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+/* ── Config ── */
+.field {
+  margin-bottom: 20px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider-bound {
+  font-size: 0.75rem;
+  color: var(--muted);
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+input[type="range"] {
+  flex: 1;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* ── Checkboxes ── */
+.checkboxes {
+  border: none;
+  margin-bottom: 20px;
+}
+
+.checkboxes legend {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background var(--transition);
+  margin-bottom: 4px;
+}
+
+.checkbox-label:hover {
+  background: var(--surface);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox-label em {
+  color: var(--muted);
+  font-style: normal;
+  font-size: 0.8rem;
+}
+
+/* ── Error message ── */
+.error-msg {
+  font-size: 0.8rem;
+  color: var(--strength-fraca);
+  min-height: 1.2em;
+  margin-bottom: 16px;
+}
+
+/* ── Generate button ── */
+.generate-btn {
+  width: 100%;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), opacity var(--transition);
+  letter-spacing: 0.01em;
+}
+
+.generate-btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.generate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
