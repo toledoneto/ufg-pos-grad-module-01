@@ -1,0 +1,11 @@
+{
+  "name": "gerador-senhas-frontend",
+  "version": "1.0.0",
+  "description": "Servidor frontend do Gerador de Senhas Seguras",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.0"
+  }
+}

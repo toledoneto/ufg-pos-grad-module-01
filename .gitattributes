@@ -1,0 +1,9 @@
+# Força LF para todos os arquivos de texto, em qualquer plataforma.
+* text=auto eol=lf
+
+# Binários — sem conversão de line ending.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
+*.lock binary
