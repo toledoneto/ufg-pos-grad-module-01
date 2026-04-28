@@ -116,14 +116,29 @@ Ainda na Fase 04, avalie o projeto sobre questão de segurança, possíveis vari
 
 ### Etapa 05:
 
-Prompt 01:
+Prompt 01 - pedido inical:
 
 ```
 Podemos seguir para a Fase 5, Manutenção. Quais passos são recomendados para essa fase do desenvolvimento? O que podemos fazer?
 ```
 
-Prompt 02:
+Prompt 02 - adição de próximos passos:
 
 ```
 Crie também, no README.md, sugestões na seção "próximos passos" se houver outras sugestões, considerando que é um sistema simples de geração de senhas
+```
+
+### Etapas posteriores
+
+Promtp 01 - Criar Makefile
+
+```
+Crie um Makefile com as funções e passos de interesse como:
+* Iniciar o backend
+* Iniciar o frontend
+* Realizer os testes e ter o relatório de cobertura
+* Iniciar toda a aplicação
+
+Entre outros que possam ser de interesse.
+Adicione a explicação do uso desse Makefile no README.md.
 ```
