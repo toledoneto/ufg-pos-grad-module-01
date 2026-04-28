@@ -60,7 +60,79 @@ Aplicação web para geração de senhas seguras com critérios definidos pelo u
 
 ## Fase 2 — Projeto
 
-> _A ser documentado._
+### Arquitetura
+
+A aplicação segue uma arquitetura cliente-servidor simples, sem banco de dados:
+
+```
+gerador-senhas/
+├── backend/
+│   ├── main.py           # FastAPI app, rotas e CORS
+│   ├── generator.py      # Lógica de geração e cálculo de força
+│   ├── models.py         # Modelos Pydantic (request/response)
+│   └── requirements.txt
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+└── docs/
+    ├── casos-de-uso.md
+    ├── fluxo-geracao.md
+    └── sequencia-api.md
+```
+
+```mermaid
+graph LR
+    U([👤 Usuário]) -->|HTTP| F
+    subgraph frontend ["Frontend"]
+        F[index.html\nstyle.css\nscript.js]
+    end
+    F -->|POST /api/gerar-senha\nJSON via fetch| B
+    subgraph backend ["Backend — FastAPI"]
+        B[main.py] --> G[generator.py]
+    end
+```
+
+### Diagramas
+
+- [Casos de Uso](docs/casos-de-uso.md)
+- [Fluxo de Geração de Senha](docs/fluxo-geracao.md)
+- [Sequência — Frontend ↔ Backend e Contrato da API](docs/sequencia-api.md)
+
+### Contrato da API
+
+**`POST /api/gerar-senha`**
+
+Request:
+```json
+{ "tamanho": 16, "maiusculas": true, "minusculas": true, "numeros": true, "especiais": false }
+```
+
+Response `200`:
+```json
+{ "senha": "aB3xYmQpLz7wNkRe", "forca": "forte" }
+```
+
+Response `422`:
+```json
+{ "detail": "Pelo menos um tipo de caractere deve ser selecionado." }
+```
+
+### Cálculo de Força da Senha
+
+| Força | Critério |
+|-------|----------|
+| Fraca | apenas 1 tipo **ou** tamanho < 10 |
+| Média | 2 tipos **e** tamanho ≥ 10 |
+| Forte | 3 tipos **e** tamanho ≥ 12 |
+| Muito Forte | 4 tipos **e** tamanho ≥ 16 |
+
+### Decisões de projeto
+
+- O frontend **não gera** a senha — toda geração ocorre no backend com `secrets` (CSPRNG).
+- O backend é **stateless**: nenhuma senha é armazenada, nem em memória, nem em log.
+- CORS configurado para aceitar apenas origem do frontend em desenvolvimento (`localhost`).
+- A senha retornada garante ao menos 1 caractere de cada tipo ativo antes de preencher o restante aleatoriamente.
 
 ---
 
