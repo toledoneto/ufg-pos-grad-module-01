@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerador de Senhas Seguras</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <div class="card">
+      <h1>Gerador de Senhas Seguras</h1>
+
+      <!-- Exibição da senha gerada -->
+      <div class="password-display">
+        <span id="passwordText" class="placeholder">A senha aparecerá aqui</span>
+        <button id="copyBtn" class="copy-btn" disabled aria-label="Copiar senha">Copiar</button>
+      </div>
+
+      <!-- Indicador de força -->
+      <div class="strength-row" aria-live="polite">
+        <div class="strength-bar">
+          <div class="strength-fill" id="strengthFill"></div>
+        </div>
+        <span class="strength-label" id="strengthLabel"></span>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Critérios -->
+      <div class="config">
+
+        <div class="field">
+          <label for="lengthSlider">
+            Tamanho da senha: <strong id="lengthValue">16</strong> caracteres
+          </label>
+          <div class="slider-row">
+            <span class="slider-bound">8</span>
+            <input type="range" id="lengthSlider" min="8" max="128" value="16" />
+            <span class="slider-bound">128</span>
+          </div>
+        </div>
+
+        <fieldset class="checkboxes">
+          <legend>Tipos de caracteres</legend>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="chkUppercase" checked />
+            <span>Letras maiúsculas <em>(A–Z)</em></span>
+          </label>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="chkLowercase" checked />
+            <span>Letras minúsculas <em>(a–z)</em></span>
+          </label>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="chkNumbers" />
+            <span>Números <em>(0–9)</em></span>
+          </label>
+
+          <label class="checkbox-label">
+            <input type="checkbox" id="chkSpecials" />
+            <span>Caracteres especiais <em>(!@#$…)</em></span>
+          </label>
+        </fieldset>
+
+        <p class="error-msg" id="errorMsg" role="alert"></p>
+
+        <button id="generateBtn" class="generate-btn">Gerar Senha</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
