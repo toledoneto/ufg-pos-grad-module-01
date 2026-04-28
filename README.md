@@ -6,6 +6,47 @@ Aplicação web para geração de senhas seguras com critérios definidos pelo u
 
 ---
 
+## Início rápido
+
+> Pré-requisitos: [Python 3.12+](#pré-requisito-python-312-ou-superior), [uv](#opção-b--instalação-com-uv-mais-rápido) e [Node.js LTS](#pré-requisito-nodejs-lts) instalados.  
+> No WSL/Linux, instale o `make` com `sudo apt install make` caso ainda não tenha.
+
+```bash
+# 1. Instalar todas as dependências
+make install
+
+# 2. Iniciar backend e frontend juntos
+make start
+```
+
+A aplicação estará disponível em **http://localhost:3000**.  
+O backend em **http://127.0.0.1:8000** (documentação interativa em `/docs`).
+
+### Todos os comandos disponíveis
+
+Execute `make` (sem argumentos) para ver o help completo:
+
+```
+make install              Instala todas as dependências (backend + frontend)
+make backend-install      Instala dependências do backend com uv
+make frontend-install     Instala dependências do frontend com npm
+
+make start                Inicia backend e frontend simultaneamente
+make backend-start        Inicia apenas o backend  → http://127.0.0.1:8000
+make frontend-start       Inicia apenas o frontend → http://localhost:3000
+
+make test                 Executa todos os testes
+make coverage             Testes com relatório de cobertura no terminal
+make coverage-html        Testes com relatório HTML em backend/htmlcov/
+
+make health               Verifica se o backend está respondendo
+make audit                Auditoria de segurança das dependências
+make deps-check           Lista dependências desatualizadas
+make clean                Remove arquivos gerados (venv, cache, node_modules)
+```
+
+---
+
 ## Ciclo de Desenvolvimento
 
 - [Fase 1 — Levantamento de Requisitos](#fase-1--levantamento-de-requisitos)
