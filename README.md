@@ -297,21 +297,86 @@ Para **parar o servidor**, pressione `Ctrl + C` no terminal.
 | `frontend/index.html` | Estrutura da página: exibição da senha, indicador de força, slider de tamanho, checkboxes e botões |
 | `frontend/style.css` | Estilo visual: card centralizado, barra de força com cores por nível, feedback do botão copiar |
 | `frontend/script.js` | Lógica: validação de critérios, chamada à API via `fetch`, exibição do resultado e cópia para clipboard |
+| `frontend/server.js` | Servidor Express que entrega os arquivos estáticos do frontend |
+| `frontend/package.json` | Dependências Node.js do frontend (`express`) |
 
-### Como abrir o frontend
+### Como executar o frontend
 
 > O backend deve estar em execução antes de abrir o frontend.  
 > Consulte a seção **Como executar o backend** acima.
 
-#### Opção A — Abrir diretamente no navegador
+#### Pré-requisito: Node.js LTS
 
-Navegue até a pasta `frontend/` pelo explorador de arquivos e dê dois cliques em `index.html`.  
-O navegador abrirá a aplicação localmente.
+Verifique se o Node.js já está instalado:
 
-#### Opção B — VS Code Live Server (recomendado)
+```
+node --version
+```
 
-Se estiver usando o VS Code, instale a extensão **Live Server** (Ritwick Dey), clique com o botão direito em `index.html` e selecione **"Open with Live Server"**.  
-A aplicação abrirá em `http://127.0.0.1:5500` e recarregará automaticamente a cada alteração nos arquivos.
+Se o resultado for `v18.x` ou superior, está pronto. Caso contrário, instale:
+
+**Windows**
+
+Baixe o instalador LTS em [nodejs.org](https://nodejs.org) e execute-o. Outra opção, se tiver o `winget`:
+
+```
+winget install OpenJS.NodeJS.LTS
+```
+
+**Linux (Ubuntu / Debian)**
+
+```
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+**Linux — alternativa com nvm** (gerencia múltiplas versões do Node.js)
+
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+```
+
+Feche e reabra o terminal, depois execute:
+
+```
+nvm install --lts
+nvm use --lts
+```
+
+---
+
+#### Passos para iniciar o servidor frontend
+
+**Passo 1 — Acesse a pasta do frontend**
+
+```
+cd frontend
+```
+
+**Passo 2 — Instale as dependências**
+
+```
+npm install
+```
+
+> Este comando cria a pasta `node_modules/` com o Express. Só precisa rodar uma vez.
+
+**Passo 3 — Inicie o servidor**
+
+```
+npm start
+```
+
+O terminal exibirá:
+
+```
+Servidor frontend disponível em http://localhost:3000
+Pressione Ctrl+C para parar.
+```
+
+Abra o navegador em **http://localhost:3000** para usar a aplicação.
+
+Para **parar o servidor**, pressione `Ctrl + C` no terminal.
 
 ---
 
