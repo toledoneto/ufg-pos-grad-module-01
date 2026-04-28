@@ -147,6 +147,26 @@ Response `422`:
 | `backend/models.py` | Modelos Pydantic de entrada (`SenhaRequest`) e saída (`SenhaResponse`) com validação |
 | `backend/requirements.txt` | Dependências para instalação com **pip** |
 | `backend/pyproject.toml` | Dependências para instalação com **uv** |
+| `backend/EXEMPLOS.py` | Exemplos de chamadas REST com payloads e retornos esperados para cada cenário |
+
+### Exemplos de uso da API
+
+O arquivo [`backend/EXEMPLOS.py`](backend/EXEMPLOS.py) contém 7 cenários documentados — 4 de sucesso e 3 de erro — que podem ser executados diretamente contra o servidor em execução:
+
+```
+python EXEMPLOS.py          # com o venv ativado
+uv run python EXEMPLOS.py   # com uv
+```
+
+| Exemplo | Cenário | Força esperada |
+|---------|---------|---------------|
+| 1 | Só minúsculas, tamanho 8 | `fraca` |
+| 2 | Maiúsculas + minúsculas, tamanho 12 | `média` |
+| 3 | Letras + números, tamanho 16 | `forte` |
+| 4 | Todos os tipos, tamanho 20 | `muito forte` |
+| 5 (erro) | Nenhum tipo selecionado | HTTP 422 |
+| 6 (erro) | Tamanho abaixo do mínimo (4) | HTTP 422 |
+| 7 (erro) | Tamanho acima do máximo (200) | HTTP 422 |
 
 ### Como executar o backend
 
