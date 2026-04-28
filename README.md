@@ -19,7 +19,42 @@ Aplicação web para geração de senhas seguras com critérios definidos pelo u
 
 ## Fase 1 — Levantamento de Requisitos
 
-> _A ser documentado._
+### Requisitos Funcionais
+
+| ID    | Requisito |
+|-------|-----------|
+| RF01  | O usuário define o tamanho da senha (entre 8 e 128 caracteres) |
+| RF02  | O usuário pode incluir/excluir letras maiúsculas (A-Z) |
+| RF03  | O usuário pode incluir/excluir letras minúsculas (a-z) |
+| RF04  | O usuário pode incluir/excluir números (0-9) |
+| RF05  | O usuário pode incluir/excluir caracteres especiais (`!@#$%^&*()_+-=[]{}|;':",.<>?/`) |
+| RF06  | O sistema gera uma senha por vez com base nos critérios selecionados |
+| RF07  | O usuário pode copiar a senha gerada com um clique |
+| RF08  | O sistema exibe um indicador de força da senha gerada |
+
+### Requisitos Não-Funcionais
+
+| ID     | Requisito |
+|--------|-----------|
+| RNF01  | A geração de senha é feita no backend (FastAPI/Python) por segurança |
+| RNF02  | A senha nunca é armazenada ou logada no servidor |
+| RNF03  | A API deve responder em menos de 500ms |
+
+### Regras de Negócio
+
+| ID    | Regra |
+|-------|-------|
+| RN01  | Pelo menos um tipo de caractere deve estar selecionado |
+| RN02  | O tamanho da senha deve ser entre 8 e 128 caracteres |
+| RN03  | A senha gerada deve conter ao menos 1 caractere de cada tipo selecionado |
+
+### Decisões tomadas
+
+- **Tamanho:** range de 8 a 128 caracteres.
+- **Caracteres especiais:** conjunto completo — `!@#$%^&*()_+-=[]{}|;':",.<>?/`.
+- **Quantidade:** uma senha por geração.
+- **Histórico:** sem persistência; cada sessão é independente.
+- **Comunicação:** API REST com FastAPI (Python) consumida pelo frontend via `fetch`.
 
 ---
 
@@ -49,4 +84,8 @@ Aplicação web para geração de senhas seguras com critérios definidos pelo u
 
 ## Próximos Passos
 
-> _A ser documentado._
+Funcionalidades identificadas durante o levantamento de requisitos, mas fora do escopo da versão inicial:
+
+- **Interface responsiva:** adaptar o layout para dispositivos móveis.
+- **Geração em lote:** permitir gerar múltiplas senhas de uma vez (ex.: 5 senhas simultaneamente).
+- **Histórico de sessão:** exibir as senhas geradas durante a sessão atual, sem persistência entre sessões.
