@@ -92,6 +92,11 @@ dmypy.json
 # Node.js
 node_modules/
 
+# Variáveis de ambiente (nunca commitar)
+.env
+.env.*
+!.env.example
+
 # OS
 .DS_Store
 Thumbs.db
