@@ -638,3 +638,33 @@ Melhorias identificadas ao longo do desenvolvimento, organizadas por área.
 - **Subpasta `public/` no frontend:** mover os arquivos estáticos para `frontend/public/` e servir apenas essa pasta com Express, evitando expor `server.js` e `package.json` ao navegador.
 - **Docker:** criar `Dockerfile` e `docker-compose.yml` para executar backend e frontend em contêineres, simplificando o setup em qualquer ambiente.
 - **Progressive Web App (PWA):** adicionar `manifest.json` e um service worker para que a aplicação possa ser instalada no dispositivo e funcionar offline (usando a última senha gerada em cache).
+
+---
+
+## Uso da IA Generativa no Desenvolvimento
+
+Este projeto foi desenvolvido com o auxílio do **Claude Sonnet 4.6** via **Claude Code**, com o desenvolvedor conduzindo cada decisão e a IA atuando como par de programação. O histórico completo de prompts está em [PROMPTS.md](PROMPTS.md).
+
+### Fase 1 — Levantamento de Requisitos
+
+A IA propôs a estrutura inicial de requisitos funcionais, não-funcionais e regras de negócio com base no escopo descrito. O desenvolvedor validou, ajustou limites (tamanho da senha, charset de especiais) e definiu o que ficaria fora do escopo inicial, direcionando as decisões de produto.
+
+### Fase 2 — Projeto
+
+A IA gerou os diagramas Mermaid (casos de uso, fluxo de geração e sequência da API), a estrutura de pastas e o contrato REST. O desenvolvedor revisou e aprovou cada artefato antes de seguir adiante.
+
+### Fase 3 — Codificação
+
+A IA implementou o backend (FastAPI, modelos Pydantic, gerador com `secrets`) e o frontend (HTML, CSS, JS, servidor Express), seguindo as decisões de projeto validadas. O desenvolvedor orientou ajustes incrementais — como trocar o instalador do `uv`, mudar `EXEMPLOS.py` para `EXEMPLOS.md` e adicionar o servidor Node.js — demonstrando o ciclo real de revisão e correção.
+
+### Fase 4 — Testes e Validação
+
+A IA criou a suíte de 57 testes com pytest (unitários e de integração) e realizou uma auditoria de segurança que identificou dois problemas concretos: o charset de especiais com barra invertida (bug de raw string) e o CORS permissivo fixo no código. Ambos foram corrigidos com variáveis de ambiente e um arquivo de configuração externalizado.
+
+### Fase 5 — Manutenção
+
+A IA sugeriu e implementou os artefatos de manutenção: CHANGELOG seguindo Keep a Changelog, endpoint `/health`, logging estruturado (sem registrar a senha gerada) e o guia de gestão de dependências. Também expandiu a seção "Próximos Passos" com 16 sugestões categorizadas.
+
+### Considerações gerais
+
+A IA foi utilizada para **acelerar a produção de código e documentação**, mas todas as decisões de escopo, tecnologia e arquitetura foram tomadas pelo desenvolvedor. Erros foram identificados e corrigidos durante o processo — como o bug no charset e a reformulação dos exemplos — evidenciando que a revisão humana é indispensável mesmo com o auxílio de IA.
