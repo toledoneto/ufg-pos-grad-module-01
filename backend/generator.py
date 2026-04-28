@@ -4,7 +4,7 @@ import string
 _UPPERCASE = string.ascii_uppercase
 _LOWERCASE = string.ascii_lowercase
 _DIGITS = string.digits
-_SPECIALS = r"!@#$%^&*()_+-=[]{}|;':\",./<>?"
+_SPECIALS = """!@#$%^&*()_+-=[]{}|;':",.<>?/"""
 
 
 def calcular_forca(tamanho: int, num_tipos: int) -> str:
