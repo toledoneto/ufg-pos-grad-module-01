@@ -147,16 +147,15 @@ Response `422`:
 | `backend/models.py` | Modelos Pydantic de entrada (`SenhaRequest`) e saída (`SenhaResponse`) com validação |
 | `backend/requirements.txt` | Dependências para instalação com **pip** |
 | `backend/pyproject.toml` | Dependências para instalação com **uv** |
-| `backend/EXEMPLOS.py` | Exemplos de chamadas REST com payloads e retornos esperados para cada cenário |
+| `backend/EXEMPLOS.md` | Exemplos de chamadas REST com payloads JSON e retornos esperados para uso em Postman, Insomnia ou similar |
 
 ### Exemplos de uso da API
 
-O arquivo [`backend/EXEMPLOS.py`](backend/EXEMPLOS.py) contém 7 cenários documentados — 4 de sucesso e 3 de erro — que podem ser executados diretamente contra o servidor em execução:
+O arquivo [`backend/EXEMPLOS.md`](backend/EXEMPLOS.md) contém 7 cenários documentados — 4 de sucesso e 3 de erro — com os payloads JSON prontos para colar em ferramentas como **Postman** ou **Insomnia**:
 
-```
-python EXEMPLOS.py          # com o venv ativado
-uv run python EXEMPLOS.py   # com uv
-```
+- **URL:** `http://127.0.0.1:8000/api/gerar-senha`
+- **Método:** `POST`
+- **Header:** `Content-Type: application/json`
 
 | Exemplo | Cenário | Força esperada |
 |---------|---------|---------------|
