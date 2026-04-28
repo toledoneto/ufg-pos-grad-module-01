@@ -566,8 +566,34 @@ O documento [docs/gestao-dependencias.md](docs/gestao-dependencias.md) cobre:
 
 ## Próximos Passos
 
-Funcionalidades identificadas durante o levantamento de requisitos, mas fora do escopo da versão inicial:
+Melhorias identificadas ao longo do desenvolvimento, organizadas por área.
 
-- **Interface responsiva:** adaptar o layout para dispositivos móveis.
-- **Geração em lote:** permitir gerar múltiplas senhas de uma vez (ex.: 5 senhas simultaneamente).
-- **Histórico de sessão:** exibir as senhas geradas durante a sessão atual, sem persistência entre sessões.
+### Funcionalidades
+
+- **Geração em lote:** gerar múltiplas senhas de uma vez (ex.: 5 senhas simultaneamente) e exibir todas na tela.
+- **Histórico de sessão:** listar as senhas geradas durante a sessão atual, sem persistência entre sessões.
+- **Exclusão de caracteres ambíguos:** opção para excluir caracteres visualmente parecidos (`0` e `O`, `l`, `1` e `I`) — útil para senhas que precisam ser lidas e digitadas manualmente.
+- **Avaliação de senha existente:** campo para o usuário colar uma senha própria e receber uma avaliação de força, sem precisar gerá-la pelo sistema.
+- **Cálculo de entropia real:** substituir a classificação de força atual (baseada em contagem de tipos e tamanho) por cálculo de entropia em bits (`log₂(charset_size ^ length)`), tornando o indicador matematicamente preciso.
+- **Padrão personalizado:** permitir que o usuário defina um padrão de senha, como `AAA-999-aaa`, para casos que exigem formato específico.
+
+### Interface e experiência
+
+- **Interface responsiva:** adaptar o layout para dispositivos móveis (deferido do escopo inicial).
+- **Modo escuro / claro:** alternar entre temas com base na preferência do sistema (`prefers-color-scheme`) ou por botão na interface.
+- **Exibir / ocultar senha:** botão para revelar ou mascarar a senha gerada, útil em ambientes compartilhados.
+- **Acessibilidade (WCAG 2.1):** garantir navegação completa por teclado, contraste mínimo de 4.5:1 e compatibilidade com leitores de tela.
+
+### Qualidade e testes
+
+- **Testes no frontend:** adicionar testes unitários com [Vitest](https://vitest.dev) e testes end-to-end com [Playwright](https://playwright.dev), cobrindo o fluxo completo de geração e cópia no navegador.
+- **Pipeline de CI/CD:** configurar GitHub Actions para rodar `pytest` e `npm audit` automaticamente a cada pull request.
+
+### Infraestrutura e implantação
+
+- **HTTPS / TLS:** configurar certificado TLS (ex.: Let's Encrypt com Certbot) para uso em produção.
+- **Rate limiting:** adicionar `slowapi` ao backend para limitar requisições por IP e prevenir abuso.
+- **Swagger UI desabilitado em produção:** passar `docs_url=None` ao `FastAPI()` quando `ENV=production`.
+- **Subpasta `public/` no frontend:** mover os arquivos estáticos para `frontend/public/` e servir apenas essa pasta com Express, evitando expor `server.js` e `package.json` ao navegador.
+- **Docker:** criar `Dockerfile` e `docker-compose.yml` para executar backend e frontend em contêineres, simplificando o setup em qualquer ambiente.
+- **Progressive Web App (PWA):** adicionar `manifest.json` e um service worker para que a aplicação possa ser instalada no dispositivo e funcionar offline (usando a última senha gerada em cache).
