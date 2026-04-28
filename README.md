@@ -382,7 +382,78 @@ Para **parar o servidor**, pressione `Ctrl + C` no terminal.
 
 ## Fase 4 — Testes e Validação
 
-> _A ser documentado._
+Os testes cobrem o backend em três camadas: lógica de geração, validação de modelos e a API REST completa.
+
+### Estrutura dos testes
+
+| Arquivo | O que testa |
+|---------|-------------|
+| `backend/tests/test_generator.py` | `calcular_forca` (todos os limites de cada nível) e `gerar_senha` (comprimento, presença/ausência de cada tipo, charset exclusivo, força retornada, correção do charset de especiais) |
+| `backend/tests/test_models.py` | `SenhaRequest` (valores padrão, fronteiras de tamanho, validação de tipos) e `SenhaResponse` |
+| `backend/tests/test_api.py` | Endpoint `POST /api/gerar-senha` (respostas 200 e 422, comprimento, força, valores padrão, aleatoriedade) |
+
+### Instalação das dependências de teste
+
+As dependências de teste são separadas das dependências de produção e **não são necessárias para executar a aplicação**.
+
+**Com uv** (instala produção + dev de uma vez):
+
+```
+cd backend
+uv sync
+```
+
+**Com pip** (instale primeiro as dependências de produção, depois as de dev):
+
+```
+cd backend
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
+
+### Executando os testes
+
+Os comandos abaixo devem ser executados dentro da pasta `backend/`.
+
+**Rodar todos os testes:**
+
+```
+pytest
+```
+
+Com `uv`:
+```
+uv run pytest
+```
+
+**Rodar com relatório de cobertura de código:**
+
+```
+pytest --cov --cov-report=term-missing
+```
+
+Com `uv`:
+```
+uv run pytest --cov --cov-report=term-missing
+```
+
+A saída indicará quais linhas do código **não** foram cobertas por nenhum teste — ideal para identificar lacunas.
+
+### Resultado esperado
+
+```
+============================= test session starts ==============================
+collected 57 items
+
+tests/test_api.py::test_resposta_contem_campos_senha_e_forca PASSED
+tests/test_api.py::test_senha_e_uma_string PASSED
+...
+tests/test_generator.py::test_calcular_forca[8-1-fraca] PASSED
+...
+tests/test_models.py::test_valores_padrao PASSED
+...
+============================== 57 passed in ...s ===============================
+```
 
 ---
 
