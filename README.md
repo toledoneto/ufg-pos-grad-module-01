@@ -511,7 +511,56 @@ O arquivo [`backend/.env.example`](backend/.env.example) documenta todas as vari
 
 ## Fase 5 — Manutenção
 
-> _A ser documentado._
+### Rastreabilidade de mudanças
+
+O arquivo [CHANGELOG.md](CHANGELOG.md) registra todas as alterações relevantes por versão,
+seguindo o padrão [Keep a Changelog](https://keepachangelog.com) com categorias
+**Adicionado**, **Corrigido**, **Segurança** e **Alterado**.
+
+A seção `[Não lançado]` lista funcionalidades planejadas para versões futuras.
+
+### Endpoint de saúde
+
+O backend expõe `GET /health` para verificar se a API está respondendo:
+
+```
+GET http://127.0.0.1:8000/health
+```
+
+Resposta esperada:
+```json
+{
+  "status": "ok",
+  "version": "1.0.0",
+  "timestamp": "2026-04-28T10:30:00.000000+00:00"
+}
+```
+
+Útil para monitoramento e para o frontend verificar a disponibilidade do servidor antes de fazer requisições.
+
+### Logging
+
+O backend registra eventos no terminal com nível, timestamp e contexto:
+
+```
+2026-04-28 10:30:00 [INFO] main: Gerador de Senhas Seguras v1.0.0 iniciado
+2026-04-28 10:30:00 [INFO] main: CORS permitido para: ['*']
+2026-04-28 10:30:05 [INFO] main: Gerando senha | tamanho=16 tipos=['maiusculas', 'minusculas']
+2026-04-28 10:30:05 [INFO] main: Senha gerada com sucesso | forca=média
+2026-04-28 10:30:10 [WARNING] main: Requisição inválida em /api/gerar-senha | erros: [...]
+```
+
+> A senha gerada **nunca é registrada nos logs**.
+
+### Gestão de dependências
+
+O documento [docs/gestao-dependencias.md](docs/gestao-dependencias.md) cobre:
+
+- Como verificar pacotes desatualizados (pip, uv, npm)
+- Como atualizar de forma segura (uma dependência por vez, com testes)
+- Como auditar vulnerabilidades de segurança (`pip-audit`, `npm audit`)
+- Frequência recomendada por tipo de versão (patch, minor, major)
+- Tabela com versões mínimas atuais de todas as dependências
 
 ---
 
