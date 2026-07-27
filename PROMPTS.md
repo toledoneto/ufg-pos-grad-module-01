@@ -158,3 +158,16 @@ Crie uma pasta chamada riscos/ e, dentro dela, adicione os seguintes arquivos co
 Crie um pasta chamada comunicacao/ e, dentro dela, adicione o seguiunte arquivo:
 * status-stackholders.md: arquivo de comunicação para stakeholders com narrativa clara com contexto, riscos e próximos passos
 ```
+
+## Módulo 10: Engenharia de Requisitos com Inteligência Artificial Generativa [ESP T1 ES C10]
+
+
+```
+Analise meu projeto dessa pasta.
+
+Preciso criar um documento geralmente produzido durante a etapa de elicitação de requisitos e utilizando a Inteligência Artificial Generativa como apoio para identificar requisitos, regras de negócio, requisitos não funcionais, lacunas e ambiguidades, além de selecionar e elaborar os artefatos de especificação mais adequados para representar a solução proposta.
+
+Faça esse processo para esse projeto criando os artefatos que forem mais adequados para ele como histórias de usuário, casos de uso, critérios de aceitação, protótipos, entre outros.
+
+Crie um documento, em requisitos/, chamado ELICITACAO.md em que explica por que esses artefatos foram considerados os mais adequados para representar os requisitos do projeto.
+```
