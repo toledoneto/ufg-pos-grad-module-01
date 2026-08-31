@@ -169,3 +169,32 @@ Crie um Makefile com as funções e passos de interesse como:
 Entre outros que possam ser de interesse.
 Adicione a explicação do uso desse Makefile no README.md.
 ```
+
+## Módulo 9: Gerência de Projetos de Software Apoiada por Inteligência Artificial Generativa [ESP T1 ES C9]
+
+Prompt 01 - Prompt inicial:
+
+```
+Leia o projeto desse diretório e faça o exercício de pensar em como gerenciaríamos esse projeto do começo ao fim.
+
+Crie uma pasta chamada riscos/ e, dentro dela, adicione os seguintes arquivos com os seguintes contúdos:
+* identificacao.md: arquivo de identificação de riscos com lista de riscos com descrição e contexto de ocorrência.
+* analise.md: arquivo de análise de riscos com impactos e fatores condicionantes.
+* respostas.md: arquivo com estratégias de respostas de como evitar, mitigar, transferir ou aceitar, todo com justificativas
+
+Crie um pasta chamada comunicacao/ e, dentro dela, adicione o seguiunte arquivo:
+* status-stackholders.md: arquivo de comunicação para stakeholders com narrativa clara com contexto, riscos e próximos passos
+```
+
+## Módulo 10: Engenharia de Requisitos com Inteligência Artificial Generativa [ESP T1 ES C10]
+
+
+```
+Analise meu projeto dessa pasta.
+
+Preciso criar um documento geralmente produzido durante a etapa de elicitação de requisitos e utilizando a Inteligência Artificial Generativa como apoio para identificar requisitos, regras de negócio, requisitos não funcionais, lacunas e ambiguidades, além de selecionar e elaborar os artefatos de especificação mais adequados para representar a solução proposta.
+
+Faça esse processo para esse projeto criando os artefatos que forem mais adequados para ele como histórias de usuário, casos de uso, critérios de aceitação, protótipos, entre outros.
+
+Crie um documento, em requisitos/, chamado ELICITACAO.md em que explica por que esses artefatos foram considerados os mais adequados para representar os requisitos do projeto.
+```

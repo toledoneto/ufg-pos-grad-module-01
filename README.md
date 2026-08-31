@@ -821,3 +821,7 @@ A IA sugeriu e implementou os artefatos de manutenção: CHANGELOG seguindo Keep
 ### Considerações gerais
 
 A IA foi utilizada para **acelerar a produção de código e documentação**, mas todas as decisões de escopo, tecnologia e arquitetura foram tomadas pelo desenvolvedor. Erros foram identificados e corrigidos durante o processo — como o bug no charset e a reformulação dos exemplos — evidenciando que a revisão humana é indispensável mesmo com o auxílio de IA.
+
+### Módulo 9: Gerência de Projetos de Software Apoiada por Inteligência Artificial Generativa [ESP T1 ES C9]
+
+Sobre o uso da IA generativa, nesse módulo, não houveram muitas limitações ou dificuldades, mas o cuidado essencial foi ler as sugestões criadas para ver se elas fazem sentido, se atendem o que foi pedido e/ou se poderiam mudar, de alguma forma, o funcionamento do projeto de forma a alterá-lo a ponto de perder sua funcionalidade inicial.
