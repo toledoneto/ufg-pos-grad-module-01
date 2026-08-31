@@ -47,6 +47,155 @@ make clean                Remove arquivos gerados (venv, cache, node_modules)
 
 ---
 
+## Discovery de Arquitetura
+
+> Esta seção documenta o sistema em linguagem natural e em Mermaid (diagrams as code), tornando a arquitetura versionável, revisável e reprodutível. Os diagramas foram gerados com auxílio do **Claude Sonnet 4.6** e ajustados — decisões em [Ajustes nos diagramas gerados](#ajustes-nos-diagramas-gerados); histórico de prompts em [PROMPTS.md](PROMPTS.md).
+
+### Descrição do Sistema
+
+**Escopo**
+
+Aplicação web utilitária de sessão única: o usuário define critérios — comprimento e tipos de caracteres — e recebe uma senha gerada com técnica criptograficamente segura no servidor. Não há autenticação, persistência de dados ou estado compartilhado entre sessões.
+
+**Nível da visão**
+
+Container (C4 Nível 2): a descrição detalha os três containers que compõem o sistema — o servidor de arquivos estáticos, o cliente JavaScript executado no navegador e a API backend.
+
+**Limites e responsabilidades**
+
+| Container | Tecnologia | Responsabilidade |
+|-----------|-----------|-----------------|
+| Servidor Estático | Node.js / Express | Entrega os arquivos HTML, CSS e JS ao navegador na porta 3000 |
+| Cliente Web | HTML / CSS / JavaScript | Captura critérios, valida seleção mínima, chama a API e exibe o resultado |
+| API Backend | Python 3.12 / FastAPI | Valida critérios com Pydantic, gera senha com `secrets.choice()` (CSPRNG) e calcula força |
+
+**Integrações**
+
+Nenhuma integração externa. A única comunicação é interna: o cliente web envia `POST /api/gerar-senha` ao backend via `fetch`. Não há banco de dados, fila de mensagens ou serviços de terceiros.
+
+**Restrições**
+
+- A senha nunca é armazenada — backend completamente stateless.
+- Toda geração usa exclusivamente `secrets.choice()` (CSPRNG do SO), nunca `random`.
+- CORS controlado por variável de ambiente `ALLOWED_ORIGINS` — restrito em produção.
+- A senha trafega em texto claro na resposta HTTP, exigindo TLS em produção.
+
+**Lacunas identificadas**
+
+| Lacuna | Risco | Mitigação futura |
+|--------|-------|-----------------|
+| Sem HTTPS nativo | Senha exposta em redes não confiáveis | TLS com Let's Encrypt + Certbot |
+| Sem rate limiting | API suscetível a abuso por automação | `slowapi` no FastAPI |
+| Swagger UI exposto | Superfície desnecessária em produção | `docs_url=None` quando `ENV=production` |
+| Sem testes E2E | Fluxo completo de interação não coberto | Playwright |
+| Sem modo offline | Aplicação inacessível sem servidor ativo | PWA + service worker |
+
+---
+
+### Diagrama Estrutural — Visão de Containers (C4 Nível 2)
+
+> Gerado por IA (Claude Sonnet 4.6) e ajustado — decisões em [Ajustes nos diagramas gerados](#ajustes-nos-diagramas-gerados).
+
+```mermaid
+C4Container
+    title Gerador de Senhas Seguras — Containers (C4 Nível 2)
+
+    Person(usuario, "Usuário", "Acessa pelo navegador para gerar senhas com critérios definidos")
+
+    System_Boundary(app, "Gerador de Senhas Seguras") {
+        Container(express, "Servidor Estático", "Node.js / Express · :3000", "Entrega os arquivos estáticos (HTML, CSS, JS) ao navegador do usuário")
+        Container(frontend, "Cliente Web", "HTML / CSS / JavaScript", "Interface do usuário: define critérios, aciona a geração e exibe senha e indicador de força — executa no navegador")
+        Container(api, "API de Geração", "Python 3.12 / FastAPI · :8000", "Valida critérios com Pydantic, gera senha com secrets.choice() (CSPRNG) e retorna senha e nível de força")
+    }
+
+    Rel(usuario, express, "Solicita interface", "HTTP GET :3000")
+    Rel(express, usuario, "Entrega arquivos estáticos", "HTML / CSS / JS")
+    Rel(frontend, api, "Solicita geração de senha", "POST /api/gerar-senha [JSON]")
+    Rel(api, frontend, "Retorna senha e força", "{ senha, forca } · HTTP 200 / 422")
+```
+
+---
+
+### Diagrama Comportamental — Sequência da Jornada Crítica
+
+> A jornada crítica é a geração de senha: da definição de critérios pelo usuário até a exibição do resultado, incluindo o caminho de erro HTTP 422 e a etapa opcional de cópia.
+
+> Gerado por IA (Claude Sonnet 4.6) e ajustado — decisões em [Ajustes nos diagramas gerados](#ajustes-nos-diagramas-gerados).
+
+```mermaid
+sequenceDiagram
+    actor U as Usuário
+    participant F as Frontend (HTML/JS)
+    participant B as Backend (FastAPI)
+    participant S as secrets (CSPRNG do SO)
+
+    U->>F: Acessa a aplicação
+    F-->>U: Renderiza interface com valores padrão
+
+    U->>F: Ajusta critérios (tamanho e tipos de caracteres)
+    F->>F: Valida: ao menos 1 tipo selecionado
+    F-->>U: Habilita/desabilita botão "Gerar Senha"
+
+    U->>F: Clica em "Gerar Senha"
+    F->>B: POST /api/gerar-senha<br/>{ tamanho, maiusculas, minusculas, numeros, especiais }
+
+    alt Critérios inválidos (sem tipo ativo ou tamanho fora de 8–128)
+        B-->>F: HTTP 422 { detail: "mensagem de erro" }
+        F-->>U: Exibe mensagem de erro
+    else Critérios válidos
+        B->>B: Valida critérios com Pydantic
+        B->>B: Monta charset conforme tipos ativos
+        B->>S: secrets.choice(charset) × tamanho
+        S-->>B: Bytes aleatórios do CSPRNG do SO
+        B->>B: Garante ≥ 1 caractere de cada tipo ativo
+        B->>B: Calcula nível de força
+        B-->>F: HTTP 200 { senha: "...", forca: "forte" }
+        F-->>U: Exibe senha gerada e indicador de força
+    end
+
+    opt Usuário copia a senha
+        U->>F: Clica em "Copiar"
+        F->>F: navigator.clipboard.writeText(senha)
+        F-->>U: Feedback visual "Copiado!" (2 s)
+    end
+```
+
+---
+
+### Ajustes nos diagramas gerados
+
+#### Diagrama estrutural (C4 Containers)
+
+**Rascunho inicial gerado pela IA**
+
+O modelo produziu um `graph LR` simples com três nós — Usuário → Frontend → Backend — sem distinção entre servidor estático e cliente JavaScript, sem tecnologias indicadas e sem portas de rede.
+
+**Ajustes aplicados**
+
+| # | Ajuste | Motivação |
+|---|--------|-----------|
+| 1 | Migração de `graph LR` para `C4Container` | Adota notação C4 padronizada e torna explícito o nível de abstração (Nível 2 — Containers) |
+| 2 | Separação entre Servidor Estático e Cliente Web | O modelo tratou "Frontend" como um único bloco; a distinção é importante — um roda em Node.js no servidor, o outro executa no navegador do usuário |
+| 3 | Tecnologia e porta em cada container | Torna o diagrama acionável como especificação técnica para implementação |
+| 4 | Setas de resposta explícitas | O modelo omitiu os retornos; adicionei `Rel` com payload JSON e códigos HTTP para documentar o contrato de comunicação |
+
+#### Diagrama comportamental (Sequência)
+
+**Rascunho inicial gerado pela IA**
+
+O modelo gerou uma sequência com três participantes (Usuário, Frontend, Backend) cobrindo o fluxo feliz e o caso de erro HTTP 422 — estrutura correta, mas sem detalhar o processo interno do backend nem o papel do CSPRNG.
+
+**Ajustes aplicados**
+
+| # | Ajuste | Motivação |
+|---|--------|-----------|
+| 1 | Adição do participante `secrets (CSPRNG do SO)` | O CSPRNG é o componente central da garantia de segurança; ocultá-lo equipararia o diagrama ao de qualquer gerador que use `random` |
+| 2 | Detalhamento do fluxo interno do backend | O modelo colapsou tudo em uma etapa; expandi em: validação → charset → CSPRNG → cobertura de tipos → força, tornando o diagrama uma especificação de comportamento |
+| 3 | Condição do `alt` mais precisa | A condição original era genérica ("Parâmetros inválidos"); especifiquei as duas regras de negócio que disparam HTTP 422 |
+| 4 | Cópia movida para bloco `opt` | O fluxo de cópia era tratado como etapa obrigatória; movi para `opt` porque copiar é opcional e independente da geração da senha |
+
+---
+
 ## Ciclo de Desenvolvimento
 
 - [Fase 1 — Levantamento de Requisitos](#fase-1--levantamento-de-requisitos)
@@ -644,6 +793,10 @@ Melhorias identificadas ao longo do desenvolvimento, organizadas por área.
 ## Uso da IA Generativa no Desenvolvimento
 
 Este projeto foi desenvolvido com o auxílio do **Claude Sonnet 4.6** via **Claude Code**, com o desenvolvedor conduzindo cada decisão e a IA atuando como par de programação. O histórico completo de prompts está em [PROMPTS.md](PROMPTS.md).
+
+### Discovery de Arquitetura
+
+A IA gerou os rascunhos iniciais dos diagramas Mermaid — o diagrama de containers inspirado em C4 e o diagrama de sequência da jornada crítica — a partir da descrição do sistema em linguagem natural. O desenvolvedor revisou cada rascunho e aplicou quatro ajustes em cada diagrama, documentados na seção [Ajustes nos diagramas gerados](#ajustes-nos-diagramas-gerados): os principais foram a migração do container diagram de `graph LR` para `C4Container` (para adotar notação padronizada), a separação do "Frontend" em Servidor Estático e Cliente Web, e a adição do participante `secrets (CSPRNG do SO)` no diagrama de sequência, que é o componente que diferencia a aplicação de qualquer gerador inseguro.
 
 ### Fase 1 — Levantamento de Requisitos
 

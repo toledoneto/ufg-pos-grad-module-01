@@ -128,6 +128,33 @@ Prompt 02 - adição de próximos passos:
 Crie também, no README.md, sugestões na seção "próximos passos" se houver outras sugestões, considerando que é um sistema simples de geração de senhas
 ```
 
+### Discovery de Arquitetura (exercício de pós-graduação)
+
+Prompt 01 — Descrição do sistema e geração dos diagramas iniciais:
+
+```
+Estou fazendo uma pós em Eng de Software com uso de GenAI. A tarefa pede que eu conduza uma fase de discovery de documentação para um sistema da minha realidade usando a abordagem diagrams as code.
+
+O sistema é este repositório: um Gerador de Senhas Seguras com backend FastAPI (Python) e frontend HTML/CSS/JS servido por Node.js/Express.
+
+Preciso que você:
+1. Descreva o sistema em linguagem natural cobrindo: escopo, nível da visão, limites e responsabilidades, integrações, restrições e lacunas.
+2. Gere, em Mermaid, um diagrama estrutural inspirado no C4 (visão de containers) e um diagrama de sequência cobrindo a jornada crítica de geração de senha.
+3. Documente tudo no README: a descrição, os diagramas renderizados e as decisões/ajustes feitos sobre o que o modelo gerou.
+```
+
+Prompt 02 — Ajuste do diagrama estrutural (migração para C4Container):
+
+```
+O diagrama de containers gerado usa graph LR com três nós simples. Migre para a sintaxe C4Container do Mermaid, separando o Servidor Estático (Node.js/Express) do Cliente Web (HTML/JS que roda no navegador), e inclua tecnologia e porta em cada container. Adicione também as setas de resposta que estavam faltando.
+```
+
+Prompt 03 — Ajuste do diagrama de sequência (adição do CSPRNG e detalhamento do backend):
+
+```
+O diagrama de sequência cobre o fluxo feliz e o erro 422, mas trata o backend como uma caixa preta. Adicione o participante secrets (CSPRNG do SO), detalhe o fluxo interno do backend (validação Pydantic → charset → secrets.choice → cobertura de tipos → força), torne a condição do alt mais precisa com as duas regras de negócio que disparam 422, e mova o fluxo de cópia para um bloco opt.
+```
+
 ### Etapas posteriores
 
 Promtp 01 - Criar Makefile
