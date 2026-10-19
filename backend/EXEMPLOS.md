@@ -124,6 +124,7 @@ Todos os exemplos usam o endpoint abaixo com o método `POST`.
   "detail": [
     {
       "type": "value_error",
+      "loc": ["body"],
       "msg": "Value error, Pelo menos um tipo de caractere deve ser selecionado.",
       "input": {
         "tamanho": 16,
@@ -131,7 +132,8 @@ Todos os exemplos usam o endpoint abaixo com o método `POST`.
         "minusculas": false,
         "numeros": false,
         "especiais": false
-      }
+      },
+      "ctx": { "error": {} }
     }
   ]
 }

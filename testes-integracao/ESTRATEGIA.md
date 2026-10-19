@@ -59,10 +59,10 @@ As fixtures em [conftest.py](../backend/tests/integracao/conftest.py) sobem a AP
 |-------|-------:|---------:|---------:|
 | `test_contrato_frontend_backend.py` (Prompt 01) | 7 | 7 | 0 |
 | `test_fluxo_http_real.py` (Prompt 01) | 12 | 12 | 0 |
-| `test_casos_erro_orientado_a_dados.py` (Prompt 02) | 25 | 22 | **3** |
-| **Total** | **44** | **41** | **3** |
+| `test_casos_erro_orientado_a_dados.py` (Prompt 02) | 25 | 25 | 0 |
+| **Total** | **44** | **44** | **0** |
 
-As três falhas têm a mesma causa raiz, o **defeito D-01**: o handler de validação devolve `500` em texto puro quando o erro contém objetos não serializáveis. Isso inclui a regra de negócio "nenhum tipo selecionado". A análise completa e a correção sugerida, de uma linha, estão em [casos-de-erro.md](casos-de-erro.md#defeitos-encontrados). Com a correção aplicada numa cópia do projeto, **134 de 134** testes passam (90 existentes + 44 novos).
+Na primeira execução, 3 testes do Prompt 02 falharam pela mesma causa raiz, o **defeito D-01**: o handler de validação devolvia `500` em texto puro quando o erro continha objetos não serializáveis. Isso incluía a regra de negócio "nenhum tipo selecionado". A correção, de uma linha (`jsonable_encoder`), foi aplicada em `backend/main.py`, e agora **134 de 134** testes do projeto passam (90 existentes + 44 novos). A análise completa está em [casos-de-erro.md](casos-de-erro.md#defeitos-encontrados).
 
 ## Revisão humana sobre o que a LLM gerou
 
@@ -71,10 +71,10 @@ As três falhas têm a mesma causa raiz, o **defeito D-01**: o handler de valida
 | Rodar a integração com `TestClient` em memória, igual aos testes unitários | Trocado por **uvicorn em processo separado**. Com o `TestClient` a requisição não passa pelo socket, e o 500 aparecia como exceção Python em vez de resposta HTTP. |
 | Testar o frontend com um navegador headless (Playwright) | Descartado: exigiria Node.js e novas dependências. O contrato é extraído do JS/HTML por expressões regulares, o que cobre a integração sem executar o navegador. |
 | Tratar as coerções do Pydantic (`"16"` → 16) como erro | Reclassificadas como **decisão pendente** (CC-01 a CC-04). O frontend nunca envia esses valores, e mudar para `strict=True` é decisão de produto, não correção. |
-| Corrigir o `main.py` ao encontrar o D-01 | **Não aplicado.** O exercício é sobre gerar testes. A correção foi validada numa cópia e fica documentada, e os testes continuam afirmando o comportamento correto. |
-| Divergência entre o 422 documentado no README (`detail` string) e o real (`detail` lista) | Registrada em [cenarios-integracao.md](cenarios-integracao.md#divergência-com-a-documentação) como recomendação de correção da documentação. |
+| Corrigir o `main.py` ao encontrar o D-01 | **Adiado e depois aplicado.** Primeiro os testes foram mantidos vermelhos para registrar o defeito; a correção foi validada numa cópia do projeto e aplicada após revisão humana (Prompt 04). |
+| Divergência entre o 422 documentado no README (`detail` string) e o real (`detail` lista) | Corrigida no README e no `docs/sequencia-api.md`. Ver [cenarios-integracao.md](cenarios-integracao.md#divergência-com-a-documentação). |
 
 ## Observações
 
-- O defeito D-01 já era detectado por 2 testes unitários existentes, que falham com as versões atuais das dependências. Ou seja, a suíte estava vermelha e ninguém olhou. Isso reforça a recomendação dos "Próximos Passos" do README de rodar os testes em CI a cada *push*.
+- O defeito D-01 já era detectado por 2 testes unitários existentes, que falhavam com as versões atuais das dependências. Ou seja, a suíte estava vermelha e ninguém olhou. Isso reforça a recomendação dos "Próximos Passos" do README de rodar os testes em CI a cada *push*.
 - A LLM só encontrou os gatilhos CE-04 e CE-05 (`text/plain` e formulário) porque o prompt pediu explicitamente casos de `Content-Type` incorreto. Pedir "casos de erro" de forma genérica tende a gerar apenas variações de valor (tamanho 7, 129…).

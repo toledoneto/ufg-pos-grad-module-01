@@ -17,7 +17,7 @@ sequenceDiagram
     F->>B: POST /api/gerar-senha<br/>{ tamanho, maiusculas, minusculas, numeros, especiais }
 
     alt Parâmetros inválidos
-        B-->>F: HTTP 422 { detail: "mensagem de erro" }
+        B-->>F: HTTP 422 { detail: [ {type, loc, msg} ] }
         F-->>U: Exibe mensagem de erro
     else Parâmetros válidos
         B->>B: Monta charset conforme tipos ativos
@@ -57,9 +57,19 @@ sequenceDiagram
 ```
 
 **Response 422 — Unprocessable Entity**
+`detail` é uma **lista** de erros no formato padrão do FastAPI:
+
 ```json
 {
-  "detail": "Pelo menos um tipo de caractere deve ser selecionado."
+  "detail": [
+    {
+      "type": "value_error",
+      "loc": ["body"],
+      "msg": "Value error, Pelo menos um tipo de caractere deve ser selecionado.",
+      "input": { "tamanho": 16, "maiusculas": false, "minusculas": false, "numeros": false, "especiais": false },
+      "ctx": { "error": {} }
+    }
+  ]
 }
 ```
 

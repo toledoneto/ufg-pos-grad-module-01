@@ -20,9 +20,9 @@ Cada caso é enviado para a **API real** (uvicorn em processo separado) e valida
 | CE-01 | JSON malformado (truncado) | `POST` `application/json` `{"tamanho":` | 422 `json_invalid` | 422 `json_invalid` | ✅ |
 | CE-02 | Requisição sem corpo | `POST` sem corpo | 422 `missing` | 422 `missing` | ✅ |
 | CE-03 | Corpo é array | `[16, true]` | 422 `model_attributes_type` | 422 `model_attributes_type` | ✅ |
-| CE-04 | JSON com `Content-Type: text/plain` | `{"tamanho": 16}` | 422 `model_attributes_type` (JSON) | **500 `Internal Server Error` (texto puro)** | ❌ Defeito D-01 |
-| CE-05 | Formulário HTML | `tamanho=16&maiusculas=true` | 422 `model_attributes_type` (JSON) | **500 `Internal Server Error` (texto puro)** | ❌ Defeito D-01 |
-| CE-06 | Nenhum tipo selecionado (regra de negócio RN) | todos `false` | 422 `value_error` (JSON) | **500 `Internal Server Error` (texto puro)** | ❌ Defeito D-01 |
+| CE-04 | JSON com `Content-Type: text/plain` | `{"tamanho": 16}` | 422 `model_attributes_type` (JSON) | 422 `model_attributes_type` (antes da correção: 500 texto puro) | ✅ Corrigido (D-01) |
+| CE-05 | Formulário HTML | `tamanho=16&maiusculas=true` | 422 `model_attributes_type` (JSON) | 422 `model_attributes_type` (antes da correção: 500 texto puro) | ✅ Corrigido (D-01) |
+| CE-06 | Nenhum tipo selecionado (regra de negócio RN) | todos `false` | 422 `value_error` (JSON) | 422 `value_error` (antes da correção: 500 texto puro) | ✅ Corrigido (D-01) |
 | CE-07 | Tamanho 7 | `{"tamanho":7}` | 422 `greater_than_equal` | 422 `greater_than_equal` | ✅ |
 | CE-08 | Tamanho 129 | `{"tamanho":129}` | 422 `less_than_equal` | 422 `less_than_equal` | ✅ |
 | CE-09 | Tamanho negativo | `{"tamanho":-16}` | 422 `greater_than_equal` | 422 `greater_than_equal` | ✅ |
@@ -57,7 +57,7 @@ O Pydantic, em modo *lax* (padrão), converte alguns tipos automaticamente. O fr
 
 ## Defeitos encontrados
 
-### D-01 — Handler de validação quebra com 500 quando o erro contém objetos não serializáveis
+### D-01 — Handler de validação quebrava com 500 quando o erro continha objetos não serializáveis  ✅ Corrigido
 
 - **Onde:** [backend/main.py:53](../backend/main.py#L53) → `JSONResponse(status_code=422, content={"detail": exc.errors()})`
 - **Causa:** `exc.errors()` pode conter objetos Python que não são JSON:
@@ -67,7 +67,7 @@ O Pydantic, em modo *lax* (padrão), converte alguns tipos automaticamente. O fr
   O `json.dumps` do Starlette lança `TypeError`, e o cliente recebe `500 Internal Server Error` em **texto puro**, sem cabeçalho CORS.
 - **Impacto na integração:** o cenário mais comum de erro de negócio, **nenhum tipo selecionado**, retorna 500 em vez de 422. Como a resposta não é JSON, o `resp.json()` do frontend lança exceção, cai no `catch`, e o usuário lê *"Não foi possível conectar ao servidor"*, uma mensagem falsa. Hoje o frontend desabilita o botão quando nenhum checkbox está marcado, o que esconde o defeito na interface, mas qualquer outro cliente (Postman, integração de terceiros) o encontra.
 - **Detecção:** os testes unitários existentes `test_payload_invalido_retorna_422[payload0-nenhum tipo selecionado]` e `test_resposta_422_contem_campo_detail` em `tests/test_api.py` **já falhavam** com as versões atuais das dependências (FastAPI 0.136.1 / Pydantic 2.13.3 / Starlette 1.0.0). Os testes de integração confirmaram o defeito sobre HTTP real e encontraram dois gatilhos novos (CE-04 e CE-05).
-- **Correção sugerida** (uma linha, validada numa cópia do projeto: 134/134 testes passando):
+- **Correção aplicada** em [backend/main.py](../backend/main.py):
 
   ```python
   from fastapi.encoders import jsonable_encoder
@@ -75,9 +75,12 @@ O Pydantic, em modo *lax* (padrão), converte alguns tipos automaticamente. O fr
   return JSONResponse(status_code=422, content={"detail": jsonable_encoder(exc.errors())})
   ```
 
-- **Decisão:** o código da aplicação **não foi alterado** neste exercício. Os testes continuam afirmando o comportamento correto e permanecem vermelhos até a correção ser aplicada.
+- **Efeito colateral aceito:** o `jsonable_encoder` serializa a instância de `ValueError` em `ctx.error` como `{}`. A mensagem continua disponível em `msg`, que é o campo que um cliente deve ler.
+- **Histórico:** na primeira execução o código da aplicação não foi alterado e os testes ficaram vermelhos, documentando o defeito. A correção foi aplicada em seguida, após revisão humana.
 
 ## Resultado da execução
+
+Antes da correção:
 
 ```
 tests/integracao/test_casos_erro_orientado_a_dados.py ...FFF............ .......
@@ -85,4 +88,11 @@ FAILED ...[CE-04 Corpo JSON enviado com Content-Type text/plain]          assert
 FAILED ...[CE-05 Formulário HTML (application/x-www-form-urlencoded)]     assert 500 == 422
 FAILED ...[CE-06 Nenhum tipo de caractere selecionado (regra de negócio)] assert 500 == 422
 ========================= 3 failed, 22 passed =========================
+```
+
+Depois da correção:
+
+```
+tests/integracao/test_casos_erro_orientado_a_dados.py ......................... 
+========================= 25 passed =========================
 ```

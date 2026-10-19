@@ -7,6 +7,25 @@ e o versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ---
 
+## [1.0.1] - 2026-10-19
+
+### Adicionado
+- Testes de integração frontend ↔ backend em `backend/tests/integracao/`
+  (contrato JS ↔ Pydantic, fluxo sobre HTTP real com uvicorn, CORS e
+  casos de erro orientados a dados em `dados/casos_erro.json`)
+- Documentação dos testes de integração em `testes-integracao/`
+- Alvo `make test-integracao` e marcador pytest `integracao`
+
+### Corrigido
+- Handler de validação retornava `500 Internal Server Error` em texto puro
+  (em vez de `422` em JSON) quando nenhum tipo de caractere era selecionado
+  ou quando o `Content-Type` não era JSON: o `exc.errors()` contém objetos
+  não serializáveis (`ValueError`, `bytes`); agora passa por `jsonable_encoder`
+- Contrato do erro `422` no README e em `docs/sequencia-api.md` documentava
+  `detail` como string; o formato real é uma lista de erros
+
+---
+
 ## [1.0.0] - 2026-04-28
 
 Primeira versão funcional do Gerador de Senhas Seguras, desenvolvida seguindo

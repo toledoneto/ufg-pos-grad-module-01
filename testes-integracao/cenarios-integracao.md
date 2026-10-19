@@ -15,7 +15,7 @@ O frontend não compartilha tipos com o backend: o contrato existe apenas no Jav
 | Valor inicial | `index.html` → `value="16"` | 16 | `tamanho = 16` | ✅ Coincide |
 | Campos lidos da resposta | `script.js` → `data.senha`, `data.forca` | `senha`, `forca` | `SenhaResponse` | ✅ Coincide |
 | Níveis de força exibidos | `script.js` → `STRENGTH` | `fraca`, `média`, `forte`, `muito forte` | `calcular_forca()` | ✅ Coincide (nível desconhecido cairia em silêncio no fallback `fraca`) |
-| Tratamento de erro | `script.js` → `await resp.json()` **antes** de `if (!resp.ok)` | Toda resposta de erro precisa ser JSON | `validation_exception_handler` | ❌ **Defeito** — ver [casos-de-erro.md](casos-de-erro.md#defeitos-encontrados) |
+| Tratamento de erro | `script.js` → `await resp.json()` **antes** de `if (!resp.ok)` | Toda resposta de erro precisa ser JSON | `validation_exception_handler` | ✅ Corrigido — era o defeito D-01, ver [casos-de-erro.md](casos-de-erro.md#defeitos-encontrados) |
 | CORS | navegador em `http://localhost:3000` | Preflight `POST` + `Content-Type` liberado | `CORSMiddleware` + `ALLOWED_ORIGINS` | ✅ Coincide |
 
 ### Divergência com a documentação
@@ -32,7 +32,7 @@ O formato real do FastAPI é uma **lista de objetos**:
 { "detail": [ { "type": "value_error", "loc": ["body"], "msg": "Value error, Pelo menos um tipo de caractere deve ser selecionado.", "input": { "...": "..." } } ] }
 ```
 
-O frontend atual não lê `detail`, então isso não quebra a interface hoje, mas qualquer cliente novo escrito a partir do README trataria o erro errado. **Recomendação:** corrigir o README.
+O frontend atual não lê `detail`, então isso não quebrava a interface, mas qualquer cliente novo escrito a partir do README trataria o erro errado. **Corrigido:** o README e o `docs/sequencia-api.md` agora documentam o formato de lista.
 
 ## 2. Cenários de integração
 
@@ -61,4 +61,4 @@ tests/integracao/test_contrato_frontend_backend.py .......               [ 7 pas
 tests/integracao/test_fluxo_http_real.py ............                    [12 passed ]
 ```
 
-Todos os 19 testes dos cenários CI-01 a CI-15 passaram. O único defeito de integração do contrato (tratamento de erro) aparece nos casos de erro do Prompt 02.
+Todos os 19 testes dos cenários CI-01 a CI-15 passaram. O único defeito de integração do contrato (tratamento de erro) apareceu nos casos de erro do Prompt 02 e já foi corrigido.

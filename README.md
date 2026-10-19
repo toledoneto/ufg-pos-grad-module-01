@@ -304,9 +304,19 @@ Response `200`:
 { "senha": "aB3xYmQpLz7wNkRe", "forca": "forte" }
 ```
 
-Response `422`:
+Response `422` (formato padrão do FastAPI: `detail` é uma **lista** de erros):
 ```json
-{ "detail": "Pelo menos um tipo de caractere deve ser selecionado." }
+{
+  "detail": [
+    {
+      "type": "value_error",
+      "loc": ["body"],
+      "msg": "Value error, Pelo menos um tipo de caractere deve ser selecionado.",
+      "input": { "tamanho": 16, "maiusculas": false, "minusculas": false, "numeros": false, "especiais": false },
+      "ctx": { "error": {} }
+    }
+  ]
+}
 ```
 
 ### Cálculo de Força da Senha
@@ -635,8 +645,10 @@ A saída indicará quais linhas do código **não** foram cobertas por nenhum te
 
 ```
 ============================= test session starts ==============================
-collected 57 items
+collected 134 items
 
+tests/integracao/test_casos_erro_orientado_a_dados.py::test_caso_de_erro_retorna_status_e_corpo_json_esperados[CE-01 JSON malformado (truncado)] PASSED
+...
 tests/test_api.py::test_resposta_contem_campos_senha_e_forca PASSED
 tests/test_api.py::test_senha_e_uma_string PASSED
 ...
@@ -644,7 +656,7 @@ tests/test_generator.py::test_calcular_forca[8-1-fraca] PASSED
 ...
 tests/test_models.py::test_valores_padrao PASSED
 ...
-============================== 57 passed in ...s ===============================
+============================= 134 passed in ...s ===============================
 ```
 
 ---
@@ -830,4 +842,4 @@ Sobre o uso da IA generativa, nesse módulo, não houveram muitas limitações o
 
 ### Módulo 13: Testes de Software Automatizados com Inteligência Artificial Generativa [C13 ES T1]
 
-Na unidade 3, a IA foi usada com dois tipos de prompt para apoiar o teste de integração entre frontend e backend: um prompt de **cenários de integração + contrato de API** e outro de **casos de erro + dados de teste**. O resultado são 44 testes de integração em `backend/tests/integracao/`, que sobem a API real com uvicorn, documentados em [testes-integracao/](testes-integracao/ESTRATEGIA.md). Os testes encontraram um defeito real: o handler de validação devolve 500 em texto puro, em vez de 422, quando nenhum tipo de caractere é selecionado ou quando o `Content-Type` é incorreto. A correção sugerida está documentada em [casos-de-erro.md](testes-integracao/casos-de-erro.md#defeitos-encontrados) e não foi aplicada, por decisão do exercício.
+Na unidade 3, a IA foi usada com dois tipos de prompt para apoiar o teste de integração entre frontend e backend: um prompt de **cenários de integração + contrato de API** e outro de **casos de erro + dados de teste**. O resultado são 44 testes de integração em `backend/tests/integracao/`, que sobem a API real com uvicorn, documentados em [testes-integracao/](testes-integracao/ESTRATEGIA.md). Os testes encontraram um defeito real: o handler de validação devolvia 500 em texto puro, em vez de 422, quando nenhum tipo de caractere era selecionado ou quando o `Content-Type` era incorreto. O defeito foi corrigido com `jsonable_encoder` em `backend/main.py` (detalhes em [casos-de-erro.md](testes-integracao/casos-de-erro.md#defeitos-encontrados)), e a documentação do contrato de erro 422, que divergia do formato real, foi atualizada. Com isso, os 134 testes do projeto passam.
