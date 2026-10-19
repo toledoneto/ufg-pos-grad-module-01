@@ -7,7 +7,7 @@ e o versionamento segue o [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ---
 
-## [1.0.1] - 2026-10-19
+## [1.0.3] - 2026-10-19
 
 ### Adicionado
 - Testes de integração frontend ↔ backend em `backend/tests/integracao/`
