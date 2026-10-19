@@ -36,6 +36,7 @@ make backend-start        Inicia apenas o backend  → http://127.0.0.1:8000
 make frontend-start       Inicia apenas o frontend → http://localhost:3000
 
 make test                 Executa todos os testes
+make test-integracao      Executa apenas os testes de integração (frontend ↔ backend)
 make coverage             Testes com relatório de cobertura no terminal
 make coverage-html        Testes com relatório HTML em backend/htmlcov/
 
@@ -581,6 +582,7 @@ Os testes cobrem o backend em três camadas: lógica de geração, validação d
 | `backend/tests/test_generator.py` | `calcular_forca` (todos os limites de cada nível) e `gerar_senha` (comprimento, presença/ausência de cada tipo, charset exclusivo, força retornada, correção do charset de especiais) |
 | `backend/tests/test_models.py` | `SenhaRequest` (valores padrão, fronteiras de tamanho, validação de tipos) e `SenhaResponse` |
 | `backend/tests/test_api.py` | Endpoint `POST /api/gerar-senha` (respostas 200 e 422, comprimento, força, valores padrão, aleatoriedade) |
+| `backend/tests/integracao/` | Testes de integração frontend ↔ backend sobre HTTP real: contrato JS ↔ Pydantic, CORS e casos de erro orientados a dados. Documentação em [testes-integracao/](testes-integracao/ESTRATEGIA.md) |
 
 ### Instalação das dependências de teste
 
@@ -825,3 +827,7 @@ A IA foi utilizada para **acelerar a produção de código e documentação**, m
 ### Módulo 9: Gerência de Projetos de Software Apoiada por Inteligência Artificial Generativa [ESP T1 ES C9]
 
 Sobre o uso da IA generativa, nesse módulo, não houveram muitas limitações ou dificuldades, mas o cuidado essencial foi ler as sugestões criadas para ver se elas fazem sentido, se atendem o que foi pedido e/ou se poderiam mudar, de alguma forma, o funcionamento do projeto de forma a alterá-lo a ponto de perder sua funcionalidade inicial.
+
+### Módulo 13: Testes de Software Automatizados com Inteligência Artificial Generativa [C13 ES T1]
+
+Na unidade 3, a IA foi usada com dois tipos de prompt para apoiar o teste de integração entre frontend e backend: um prompt de **cenários de integração + contrato de API** e outro de **casos de erro + dados de teste**. O resultado são 44 testes de integração em `backend/tests/integracao/`, que sobem a API real com uvicorn, documentados em [testes-integracao/](testes-integracao/ESTRATEGIA.md). Os testes encontraram um defeito real: o handler de validação devolve 500 em texto puro, em vez de 422, quando nenhum tipo de caractere é selecionado ou quando o `Content-Type` é incorreto. A correção sugerida está documentada em [casos-de-erro.md](testes-integracao/casos-de-erro.md#defeitos-encontrados) e não foi aplicada, por decisão do exercício.

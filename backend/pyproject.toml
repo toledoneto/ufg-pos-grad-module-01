@@ -19,6 +19,9 @@ dev = [
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-v --tb=short"
+markers = [
+    "integracao: testes de integração frontend ↔ backend (sobem a API real com uvicorn)",
+]
 
 [tool.coverage.run]
 source = ["."]

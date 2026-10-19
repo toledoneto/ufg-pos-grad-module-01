@@ -1,7 +1,7 @@
 .PHONY: help \
         install backend-install frontend-install \
         start backend-start frontend-start \
-        test coverage coverage-html \
+        test test-integracao coverage coverage-html \
         health audit deps-check clean
 
 BACKEND_DIR  := backend
@@ -27,6 +27,7 @@ help:
 	@printf "\n"
 	@printf "  \033[36mTestes\033[0m\n"
 	@printf "    make test                 Executa todos os testes\n"
+	@printf "    make test-integracao      Executa apenas os testes de integração (frontend ↔ backend)\n"
 	@printf "    make coverage             Testes com relatório de cobertura no terminal\n"
 	@printf "    make coverage-html        Testes com relatório HTML em backend/htmlcov/\n"
 	@printf "\n"
@@ -83,6 +84,10 @@ start:
 test:
 	@printf "\033[1m→ Executando testes...\033[0m\n\n"
 	cd $(BACKEND_DIR) && uv run pytest
+
+test-integracao:
+	@printf "\033[1m→ Executando testes de integração...\033[0m\n\n"
+	cd $(BACKEND_DIR) && uv run pytest -m integracao
 
 coverage:
 	@printf "\033[1m→ Executando testes com cobertura...\033[0m\n\n"

@@ -198,3 +198,51 @@ Faça esse processo para esse projeto criando os artefatos que forem mais adequa
 
 Crie um documento, em requisitos/, chamado ELICITACAO.md em que explica por que esses artefatos foram considerados os mais adequados para representar os requisitos do projeto.
 ```
+## Módulo 13: Testes de Software Automatizados com Inteligência Artificial Generativa [C13 ES T1]
+
+### Unidade 3 — Testes de integração apoiados por GenAI
+
+Modelo usado: Claude Opus 5.5 via Claude Code.
+
+Cenário de integração escolhido: **fluxo front‑end ↔ back‑end** do Gerador de Senhas — o Cliente Web (`frontend/script.js` + `config.js`, servido pelo Express) chamando a API REST FastAPI (`POST /api/gerar-senha`), passando pelo middleware de CORS, pela validação Pydantic (`models.py`), pelo gerador (`generator.py`) e pelo handler de erros (`main.py`).
+
+Foram definidos dois tipos de prompt, cada um com um objetivo diferente dentro do teste de integração. Os artefatos gerados estão em [testes-integracao/](testes-integracao/) e os testes executáveis em [backend/tests/integracao/](backend/tests/integracao/).
+
+Prompt 01 — Tipo **"Cenários de integração + contrato de API"** (consumidor ↔ provedor):
+
+```
+Atue como engenheiro de QA especialista em testes de integração de APIs REST.
+
+Contexto: este repositório é um Gerador de Senhas Seguras. O consumidor é o frontend (frontend/script.js, frontend/config.js e frontend/index.html) e o provedor é a API FastAPI (backend/main.py, backend/models.py, backend/generator.py). Leia esses arquivos antes de responder; não presuma nada que não esteja no código.
+
+Tarefa:
+1. Extraia o contrato implícito que o frontend espera da API: URL e método, campos e tipos do payload enviado, limites do slider, campos lidos da resposta, valores de "forca" que o frontend sabe exibir e como ele trata respostas de erro.
+2. Compare esse contrato com o que o backend realmente implementa (rotas, SenhaRequest, SenhaResponse, calcular_forca, CORS, OpenAPI) e com o contrato documentado no README.md. Aponte divergências.
+3. Gere cenários de integração cobrindo: contrato consumidor ↔ provedor, fluxo feliz ponta a ponta sobre HTTP real (uvicorn em processo separado), health check e CORS (preflight, método e cabeçalho não permitidos, ALLOWED_ORIGINS restrito via variável de ambiente).
+
+Formato de saída:
+- testes-integracao/cenarios-integracao.md com uma tabela (ID CI-xx, objetivo, componentes integrados, pré-condição, passos, resultado esperado, teste automatizado correspondente).
+- Testes pytest em backend/tests/integracao/, sem novas dependências além das já existentes no pyproject.toml (pytest, httpx), marcados com @pytest.mark.integracao.
+- Não altere o código da aplicação: se um teste revelar defeito, mantenha o teste com o comportamento correto esperado e registre o defeito como achado.
+```
+
+Prompt 02 — Tipo **"Casos de erro + dados de teste"** (testes negativos e de fronteira orientados a dados):
+
+```
+Atue como testador especializado em testes negativos e análise de valor limite.
+
+Contexto: mesmo cenário do prompt anterior (frontend → POST /api/gerar-senha → FastAPI/Pydantic → handler de erros). O frontend faz `await resp.json()` antes de checar `resp.ok`, portanto qualquer resposta de erro que não seja JSON é exibida ao usuário como "Não foi possível conectar ao servidor".
+
+Tarefa:
+1. Gere um conjunto de dados de teste em JSON (backend/tests/integracao/dados/casos_erro.json) com casos de erro e de fronteira que atravessem as camadas da integração: JSON malformado, corpo vazio, corpo que não é objeto, Content-Type incorreto (text/plain e form), tipos errados, null, número fracionário, booleanos inválidos, limites de tamanho (7, 8, 128, 129 e valores muito grandes), regra de negócio "nenhum tipo selecionado", método HTTP errado e rota inexistente.
+2. Para cada caso informe: id (CE-xx), descrição, método, rota, Content-Type, corpo bruto (string, para permitir JSON inválido), status HTTP esperado e o "type" de erro Pydantic esperado, quando houver.
+3. Inclua também casos de coerção que o Pydantic aceita em modo lax (ex.: "16" como tamanho, "true" e 1 como booleano) e classifique-os como comportamento a ser decidido pelo time, não como erro.
+4. Crie um teste pytest parametrizado que leia esse JSON e valide status, Content-Type application/json e estrutura do corpo de erro ({"detail": [...]}) para todos os casos.
+5. Documente em testes-integracao/casos-de-erro.md a tabela de casos, o resultado esperado e o resultado observado após executar os testes, destacando os defeitos encontrados e a sugestão de correção.
+```
+
+Prompt 03 — Documentação do exercício:
+
+```
+Crie testes-integracao/ESTRATEGIA.md explicando o cenário de integração escolhido, os dois tipos de prompt usados e por que cada um foi escolhido, como executar os testes de integração, o resultado da execução, os defeitos encontrados e quais ajustes foram feitos sobre o que a LLM gerou. Adicione um alvo `make test-integracao` no Makefile e referencie a nova pasta no README.md.
+```
